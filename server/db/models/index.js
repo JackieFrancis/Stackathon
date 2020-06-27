@@ -1,6 +1,6 @@
 const User = require('./user')
 const Nutrient = require('./nutrient')
-const trackedNutrient = require('./trackedNutrient')
+// const trackedNutrient = require('./trackedNutrient')
 const DailyLog = require('./dailyLog')
 
 /**
@@ -17,12 +17,17 @@ const DailyLog = require('./dailyLog')
  * instead of: const User = require('../db/models/user')
  */
 
-User.belongsToMany(Nutrient, {through: 'trackedNutrient'})
-Nutrient.belongsToMany(User, {through: 'trackedNutrient'})
+User.belongsTo(Nutrient)
+Nutrient.hasMany(User)
+
+DailyLog.belongsTo(User)
+User.hasMany(DailyLog)
+
+// User.belongsToMany(Nutrient, {through: 'trackedNutrient'})
+// Nutrient.belongsToMany(User, {through: 'trackedNutrient'})
 
 module.exports = {
   User,
   Nutrient,
-  trackedNutrient,
   DailyLog
 }

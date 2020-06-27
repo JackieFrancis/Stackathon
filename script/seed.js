@@ -1,7 +1,7 @@
 'use strict'
 
 const db = require('../server/db')
-const {User, Nutrient} = require('../server/db/models')
+const {User, Nutrient, DailyLog} = require('../server/db/models')
 
 async function seed() {
   await db.sync({force: true})
@@ -11,14 +11,17 @@ async function seed() {
     User.create({
       name: 'Cody',
       email: 'cody@email.com',
-      password: '123',
-      macroLimit: 600
+      password: '123'
     }),
     User.create({
       name: 'Murphy',
       email: 'murphy@email.com',
-      password: '123',
-      macroLimit: 1200
+      password: '123'
+    }),
+    User.create({
+      name: 'Donna',
+      email: 'donna@email.com',
+      password: '123'
     })
   ])
 
@@ -34,9 +37,10 @@ async function seed() {
     Nutrient.create({attrNum: 204, name: 'total fat', measurement: 'g'})
   ])
 
-  const [cody, murphy] = await Promise.all([
+  const [cody, murphy, donna] = await Promise.all([
     User.findOne({where: {name: 'Cody'}}),
-    User.findOne({where: {name: 'Murphy'}})
+    User.findOne({where: {name: 'Murphy'}}),
+    User.findOne({where: {name: 'Donna'}})
   ])
 
   const [calories, cholesterol, sodium, sugar] = await Promise.all([
@@ -46,8 +50,9 @@ async function seed() {
     Nutrient.findByPk(269)
   ])
 
-  await cody.addNutrients([calories, cholesterol])
-  await murphy.addNutrients([sodium, sugar])
+  await cody.setNutrient(calories)
+  await murphy.setNutrient(cholesterol)
+  await donna.setNutrient(cholesterol)
 
   console.log(`seeded ${users.length} users and ${nutrients.length} nutrients`)
   console.log(`seeded successfully`)

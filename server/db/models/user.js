@@ -21,10 +21,12 @@ const User = db.define('user', {
     }
   },
   macroLimit: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
   macroStatus: {
-    type: Sequelize.INTEGER
+    type: Sequelize.INTEGER,
+    defaultValue: 0
   },
   salt: {
     type: Sequelize.STRING,
