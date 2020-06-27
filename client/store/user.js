@@ -6,6 +6,7 @@ import history from '../history'
  */
 const GET_USER = 'GET_USER'
 const REMOVE_USER = 'REMOVE_USER'
+const TRACK_NUTRIENT = 'TRACK_NUTRIENT'
 
 /**
  * INITIAL STATE
@@ -17,6 +18,7 @@ const defaultUser = {}
  */
 const getUser = user => ({type: GET_USER, user})
 const removeUser = () => ({type: REMOVE_USER})
+const setNutrient = user => ({type: TRACK_NUTRIENT, user})
 
 /**
  * THUNK CREATORS
@@ -56,6 +58,20 @@ export const logout = () => async dispatch => {
   }
 }
 
+export const trackNutrient = trackingDetails => {
+  return async dispatch => {
+    try {
+      const {data} = await axios.put(
+        '/api/users/track-nutrient',
+        trackingDetails
+      )
+      dispatch(setNutrient(data))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+}
+
 /**
  * REDUCER
  */
@@ -65,6 +81,8 @@ export default function(state = defaultUser, action) {
       return action.user
     case REMOVE_USER:
       return defaultUser
+    case TRACK_NUTRIENT:
+      return action.user
     default:
       return state
   }
