@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const {User} = require('../db/models')
+const {User, Nutrient, DailyLog} = require('../db/models')
 const axios = require('axios')
 module.exports = router
 
@@ -14,6 +14,23 @@ router.get('/', async (req, res, next) => {
     res.json(users)
   } catch (err) {
     next(err)
+  }
+})
+
+router.put('/track-nutrient', async (req, res, next) => {
+  try {
+    const nutrient = await Nutrient.findOne({
+      where: {name: req.body.nutrientName}
+    })
+    let user = await User.findByPk(req.user.id)
+    user = await user.setNutrient(nutrient)
+    user = await user.update({macroLimit: req.body.qty})
+    const updatedUser = await User.findByPk(req.user.id, {
+      include: [{model: Nutrient}]
+    })
+    res.json(updatedUser)
+  } catch (error) {
+    next(error)
   }
 })
 
