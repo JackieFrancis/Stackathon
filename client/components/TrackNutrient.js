@@ -29,9 +29,18 @@ export class TrackNutrient extends Component {
   }
 
   render() {
+    const {nutrient} = this.props.user
     return (
       <div>
         <h1>Select Nutrient To Track</h1>
+        {nutrient ? (
+          <h3>
+            Nutrient: {nutrient.name} Limit: {this.props.user.macroLimit}{' '}
+            {nutrient.measurement}
+          </h3>
+        ) : (
+          <h3>You are not tracking anything</h3>
+        )}
         <form onSubmit={this.handleSubmit}>
           <select
             name="nutrientName"
@@ -57,11 +66,15 @@ export class TrackNutrient extends Component {
             placeholder="e.g. 500"
             required
           />
-          <p>mg</p>
           <button type="submit">Track</button>
         </form>
       </div>
     )
+  }
+}
+const mapState = state => {
+  return {
+    user: state.user
   }
 }
 
@@ -71,4 +84,4 @@ const mapDispatch = dispatch => {
   }
 }
 
-export default connect(null, mapDispatch)(TrackNutrient)
+export default connect(mapState, mapDispatch)(TrackNutrient)

@@ -22,6 +22,11 @@ async function seed() {
       name: 'Donna',
       email: 'donna@email.com',
       password: '123'
+    }),
+    User.create({
+      name: 'Betty',
+      email: 'betty@email.com',
+      password: '123'
     })
   ])
 
