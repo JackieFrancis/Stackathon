@@ -1,18 +1,55 @@
 'use strict'
 
 const db = require('../server/db')
-const {User} = require('../server/db/models')
+const {User, Nutrient} = require('../server/db/models')
 
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
   const users = await Promise.all([
-    User.create({email: 'cody@email.com', password: '123'}),
-    User.create({email: 'murphy@email.com', password: '123'})
+    User.create({
+      name: 'Cody',
+      email: 'cody@email.com',
+      password: '123',
+      macroLimit: 600
+    }),
+    User.create({
+      name: 'Murphy',
+      email: 'murphy@email.com',
+      password: '123',
+      macroLimit: 1200
+    })
   ])
 
-  console.log(`seeded ${users.length} users`)
+  const nutrients = await Promise.all([
+    Nutrient.create({attrNum: 208, name: 'calories', measurement: 'kcal'}),
+    Nutrient.create({attrNum: 601, name: 'cholesterol', measurement: 'mg'}),
+    Nutrient.create({attrNum: 606, name: 'saturated fat', measurement: 'g'}),
+    Nutrient.create({attrNum: 605, name: 'trans fat', measurement: 'g'}),
+    Nutrient.create({attrNum: 307, name: 'sodium', measurement: 'mg'}),
+    Nutrient.create({attrNum: 269, name: 'sugar', measurement: 'g'}),
+    Nutrient.create({attrNum: 205, name: 'carbohydrates', measurement: 'g'}),
+    Nutrient.create({attrNum: 203, name: 'protein', measurement: 'g'}),
+    Nutrient.create({attrNum: 204, name: 'total fat', measurement: 'g'})
+  ])
+
+  const [cody, murphy] = await Promise.all([
+    User.findOne({where: {name: 'Cody'}}),
+    User.findOne({where: {name: 'Murphy'}})
+  ])
+
+  const [calories, cholesterol, sodium, sugar] = await Promise.all([
+    Nutrient.findByPk(208),
+    Nutrient.findByPk(601),
+    Nutrient.findByPk(307),
+    Nutrient.findByPk(269)
+  ])
+
+  await cody.addNutrients([calories, cholesterol])
+  await murphy.addNutrients([sodium, sugar])
+
+  console.log(`seeded ${users.length} users and ${nutrients.length} nutrients`)
   console.log(`seeded successfully`)
 }
 
